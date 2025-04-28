@@ -1,0 +1,58 @@
+Each subscriber can make 15 simultaneous calls.
+
+Total Calls=Subscribers×Calls per Subscriber
+Zone 1:10,000×15
+Zone 2:15,000×15
+Zone 3:5,000×15 
+Since Zone 2 has the highest traffic, it will require more channels.
+
+Step 3: Frequency Reuse Strategy
+3.1 Choosing an Appropriate Cluster Size (N)
+•	In GSM networks, the cluster size (N) is typically 3, 4, 7, or 12.
+•	Larger N reduces interference but requires more channels.
+•	Smaller N increases capacity but also increases interference.
+3.2 Assigning Frequency Bands to Zones
+We divide the 10 available channels among the 3 zones proportionally:
+1.	Allocate more channels to high-demand zones
+o	Zone 2 (highest demand) gets the most channels
+o	Zone 1 and Zone 3 share the remaining channels
+2.	Frequency Allocation Based on Demand
+o	Zone 1: 3 channels
+o	Zone 2: 4 channels
+o	Zone 3: 3 channels
+________________________________________
+Step 4: Co-Channel Interference Management
+To minimize interference:
+1.	Use a Frequency Reuse Pattern (N=3 or 4)
+o	Allocate distinct frequencies to adjacent zones.
+o	If Zone 1 uses F1, F2, F3, then Zone 2 can use F4, F5, F6, and Zone 3 can use F7, F8, F9.
+2.	Dynamic Channel Allocation (DCA)
+o	Channels are not permanently assigned to cells.
+o	The system dynamically assigns channels based on real-time traffic load.
+o	This reduces call drops by ensuring channels are available in high-demand zones.
+________________________________________
+Step 5: Handover Strategy to Reduce Call Drops
+When a user moves between zones, handover mechanisms are used:
+•	Hard Handover (2G GSM): Calls switch from one frequency to another.
+•	Soft Handover (3G UMTS): The user maintains connections with multiple towers.
+Dynamic Channel Allocation Mechanism
+•	When traffic increases in Zone 2, extra channels can be borrowed from low-traffic zones like Zone 3.
+•	This prevents call drops and optimizes spectrum usage.
+________________________________________
+Step 6: Final Frequency Reuse Plan
+Cluster Structure
+Using N = 3 cluster size, the frequency assignment can be:
+Cluster Zone	Assigned Frequencies
+Zone 1 (25 km)	F1, F2, F3
+Zone 2 (30 km)	F4, F5, F6, F10
+Zone 3 (15 km)	F7, F8, F9
+________________________________________
+Conclusion
+1.	Efficient Spectrum Utilization:
+o	Frequency reuse factor N = 3 or 4 ensures minimal interference and maximum capacity.
+2.	Dynamic Channel Allocation:
+o	Channels are not fixed but dynamically allocated based on demand.
+3.	Call Drop Reduction:
+o	Dynamic handover and channel allocation techniques reduce call drops.
+________________________________________
+This solution ensures optimal performance, minimal interference, and maximum revenue generation.

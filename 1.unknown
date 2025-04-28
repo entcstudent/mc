@@ -1,0 +1,53 @@
+import numpy as np
+
+def generate_walsh(n):
+    if n == 1:
+        return np.array([[1, 1], [1, -1]])
+    w = generate_walsh(n-1)
+    return np.vstack((np.hstack((w, w)), np.hstack((w, -w))))
+
+def cdma_simulation(users=8, bit=1, noise_floor=1e-6):
+    walsh = generate_walsh(int(np.log2(users)))
+    idx = np.random.randint(users)
+    tx_signal = bit * walsh[idx].astype(float)
+    noise = np.random.normal(0, np.sqrt(noise_floor), users)
+    rx_signal = tx_signal + noise
+
+    print("Walsh Code Matrix:\n", walsh)
+    print("\n" + "="*50)
+    print(f"\nIntended User: {idx+1}, Transmitting bit: {bit}\n")
+    print("Transmitted Signal (before noise):\n", tx_signal)
+    print("\nNoise Added:\n", noise)
+    print("\nReceived Signal (with noise):\n", rx_signal)
+    print("\n" + "="*50 + "\n")
+    print("User\tType\t\tCorrelation\tSignal Power\tNoise Power\tSNR (dB)")
+    print("-"*80)
+
+    results = []
+    for i in range(users):
+        corr = np.dot(rx_signal, walsh[i]) / users
+        sig_power = (i == idx)
+        inter = bit * np.dot(walsh[idx], walsh[i]) / users
+        noise_power = np.var(noise) if i == idx else inter**2 + np.var(noise)
+        snr_db = 10 * np.log10(sig_power / noise_power) if noise_power > 0 else float('inf')
+        results.append((i+1, 'Intended' if i==idx else 'Unintended', corr, sig_power, noise_power, snr_db))
+        print(f"{i+1}\t{results[-1][1]:12}\t{corr:+.4f}\t{sig_power:.6f}\t{noise_power:.6f}\t{snr_db:.2f}")
+
+    intended = [r for r in results if r[1] == 'Intended'][0]
+    unintended = [r for r in results if r[1] == 'Unintended']
+
+    print("\n" + "="*50)
+    print(f"SUMMARY RESULTS:")
+    print(f"Intended User {intended[0]}:")
+    print(f"  - Correlation: {intended[2]:+.4f}")
+    print(f"  - SNR: {intended[5]:.2f} dB")
+    print(f"  - Signal Power: {intended[3]:.6f}")
+    print(f"  - Noise Power: {intended[4]:.6f}")
+    print("\nAverage Unintended User:")
+    print(f"  - Avg Correlation: {np.mean([u[2] for u in unintended]):+.6f}")
+    print(f"  - Avg SNR: {np.mean([u[5] for u in unintended]):.2f} dB")
+    print(f"  - Avg Signal Power: {np.mean([u[3] for u in unintended]):.6f}")
+    print(f"  - Avg Noise Power: {np.mean([u[4] for u in unintended]):.6f}")
+    print("="*50)
+
+cdma_simulation()

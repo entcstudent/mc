@@ -1,0 +1,37 @@
+N = 1e6;                         % Number of bits
+rand('state',100); randn('state',200);  % Initialize random
+ip = rand(1,N) > 0.5;             % Random bits
+s = 2*ip - 1;                     % BPSK modulation
+n = (randn(1,N) + 1j*randn(1,N))/sqrt(2); % Noise
+Eb_NO_dB = -3:10;                 % Eb/N0 range
+
+nErr_AWGN = zeros(1,length(Eb_NO_dB));
+nErr_Rayleigh = zeros(1,length(Eb_NO_dB));
+
+for ii = 1:length(Eb_NO_dB)
+    noise = 10^(-Eb_NO_dB(ii)/20) * n;
+    y_AWGN = s + noise;           % AWGN channel
+    h = (randn(1,N) + 1j*randn(1,N))/sqrt(2); % Rayleigh fading
+    y_eq = (h.*s + noise) ./ h;    % Equalization
+
+    nErr_AWGN(ii) = sum(ip ~= (real(y_AWGN) > 0));
+    nErr_Rayleigh(ii) = sum(ip ~= (real(y_eq) > 0));
+end
+
+simBer_AWGN = nErr_AWGN/N;
+simBer_Rayleigh = nErr_Rayleigh/N;
+theoryBer_AWGN = 0.5*erfc(sqrt(10.^(Eb_NO_dB/10)));
+theoryBer_Rayleigh = 0.5*(1 - sqrt(10.^(Eb_NO_dB/10)./(1+10.^(Eb_NO_dB/10))));
+
+figure;
+semilogy(Eb_NO_dB, theoryBer_AWGN,'b.-', Eb_NO_dB, simBer_AWGN,'mx-', ...
+         Eb_NO_dB, theoryBer_Rayleigh,'r.-', Eb_NO_dB, simBer_Rayleigh,'go-','LineWidth',1.5);
+axis([-3 10 1e-5 0.5]); grid on;
+legend('Theory AWGN','Sim AWGN','Theory Rayleigh','Sim Rayleigh');
+xlabel('Eb/No (dB)'); ylabel('BER'); title('BPSK BER in AWGN and Rayleigh channel (wireless)');
+
+figure;
+semilogy(Eb_NO_dB, theoryBer_AWGN,'b.-', Eb_NO_dB, simBer_AWGN,'mx-','LineWidth',1.5);
+axis([-3 10 1e-5 0.5]); grid on;
+legend('Theory AWGN','Sim AWGN');
+xlabel('Eb/No (dB)'); ylabel('BER'); title('BPSK BER in AWGN');

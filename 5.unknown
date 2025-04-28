@@ -1,0 +1,11 @@
+no 
+enable
+config t 
+interface g0/0/1 
+no shut 
+ip address 10.86.7.1 255.255.255.0 
+exit 
+ip dhcp pool ippool1
+default-router 10.86.7.1 
+network 10.86.7.0 255.255.255.0 
+exit
