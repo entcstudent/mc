@@ -1,56 +1,67 @@
-# SERVER CODE 
-import socket 
-# Create a TCP/IP socket 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-# Bind the socket to the port 
-server_address = ('localhost', 12345) 
-print(f"Starting server on {server_address[0]} port {server_address[1]}") 
-server_socket.bind(server_address) 
-# Listen for incoming connections 
-server_socket.listen(1) 
-while True: 
-print("Waiting for a connection...") 
-connection, client_address = server_socket.accept() 
-try: 
-print(f"Connection established with {client_address}") 
-# Open a file to write incoming data 
-with open("server_received.txt", "w") as file: 
-while True: 
-data = connection.recv(1024) 
-if data: 
-print(f"Received: {data.decode()}") 
-f
- ile.write(data.decode()) 
-connection.sendall(b"Data received by server") 
-else: 
-print("No more data from client") 
-break 
-f
- inally: 
-# Clean up the connection 
-connection.close() 
+import socket
+
+# Create a TCP/IP socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind the socket to the port
+server_address = ('localhost', 12345)
+print(f"Starting server on {server_address[0]} port {server_address[1]}")
+server_socket.bind(server_address)
+
+# Listen for incoming connections
+server_socket.listen(1)
+
+while True:
+    print("Waiting for a connection...")
+    connection, client_address = server_socket.accept()
+
+    try:
+        print(f"Connection established with {client_address}")
+
+        # Open a file to write incoming data
+        with open("server_received.txt", "w") as file:
+            while True:
+                data = connection.recv(1024)
+                if data:
+                    print(f"Received: {data.decode()}")
+                    file.write(data.decode())
+                    connection.sendall(b"Data received by server")
+                else:
+                    print("No more data from client")
+                    break
+
+    finally:
+        # Clean up the connection
+        connection.close()
+
 # CLIENT CODE 
-import socket 
-# Create a TCP/IP socket 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-# Connect the socket to the server 
-server_address = ('localhost', 12345) 
-print(f"Connecting to {server_address[0]} port {server_address[1]}") 
-client_socket.connect(server_address) 
-try: 
-# Write data to a file and send to server 
-with open("client_message.txt", "w") as file: 
-f
- ile.write("Hello, Server! This is the client sending data from a file.") 
-# Read the file content and send it 
-with open("client_message.txt", "r") as file: 
-message = file.read() 
-print(f"Sending: {message}") 
-client_socket.sendall(message.encode()) 
-# Receive server response 
-data = client_socket.recv(1024) 
-print(f"Received from server: {data.decode()}") 
-f
- inally: 
-# Close the connection 
-client_socket.close()
+
+import socket
+
+# Create a TCP/IP socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Connect the socket to the server
+server_address = ('localhost', 12345)
+print(f"Connecting to {server_address[0]} port {server_address[1]}")
+client_socket.connect(server_address)
+
+try:
+    # Write data to a file and send to server
+    with open("client_message.txt", "w") as file:
+        file.write("Hello, Server! This is the client sending data from a file.")
+
+    # Read the file content and send it
+    with open("client_message.txt", "r") as file:
+        message = file.read()
+
+    print(f"Sending: {message}")
+    client_socket.sendall(message.encode())
+
+    # Receive server response
+    data = client_socket.recv(1024)
+    print(f"Received from server: {data.decode()}")
+
+finally:
+    # Close the connection
+    client_socket.close()
